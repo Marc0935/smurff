@@ -53,7 +53,7 @@ namespace smurff
          return m_max_iter;
       }
 
-      int setMaxIter(int value)
+      void setMaxIter(int value)
       {
          m_max_iter = value;
       }

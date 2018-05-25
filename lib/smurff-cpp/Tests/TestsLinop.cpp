@@ -127,7 +127,7 @@ TEST_CASE( "SparseFeat/solve_blockcg", "BlockCG solver (1rhs)" )
  
    B << 0.56,  0.55,  0.3 , -1.78;
    X_true << 0.35555556,  0.40709677, -0.16444444, -0.87483871;
-   int niter = smurff::linop::solve_blockcg(X, sf, 0.5, B, 1e-6);
+   int niter = smurff::linop::solve_blockcg(X, sf, 0.5, B, 1e-6, 1000);
    for (int i = 0; i < X.rows(); i++) {
      for (int j = 0; j < X.cols(); j++) {
        REQUIRE( X(i,j) == Approx(X_true(i,j)) );
@@ -151,7 +151,7 @@ TEST_CASE( "SparseFeat/solve_blockcg_1_0", "BlockCG solver (3rhs separately)" )
              1.69333333, -0.12709677, -1.94666667,  0.49483871,
              0.66      , -0.04064516, -0.78      ,  0.65225806;
  
-   smurff::linop::solve_blockcg(X, sf, 0.5, B, 1e-6, 1, 0);
+   smurff::linop::solve_blockcg(X, sf, 0.5, B, 1e-6, 1000, 1, 0);
    for (int i = 0; i < X.rows(); i++) {
      for (int j = 0; j < X.cols(); j++) {
        REQUIRE( X(i,j) == Approx(X_true(i,j)) );
@@ -195,7 +195,7 @@ TEST_CASE( "linop/solve_blockcg_dense/fail", "BlockCG solver for dense (3rhs sep
         0.09,  0.51, -0.63,  1.59;
  
    // this system is unsolvable
-   REQUIRE_THROWS(smurff::linop::solve_blockcg(X, sf, 0.5, B, 1e-6, true));
+   REQUIRE_THROWS(smurff::linop::solve_blockcg(X, sf, 0.5, B, 1e-6, 1000, true));
 }
 
 TEST_CASE( "linop/solve_blockcg_dense/ok", "BlockCG solver for dense (3rhs separately)" ) 
@@ -223,7 +223,7 @@ TEST_CASE( "linop/solve_blockcg_dense/ok", "BlockCG solver for dense (3rhs separ
    Eigen::MatrixXd X(3, 6);
 
    //-- Solves the system (K' * K + reg * I) * X = B for X for m right-hand sides
-   smurff::linop::solve_blockcg(X, K, 0.5, B, 1e-6, true);
+   smurff::linop::solve_blockcg(X, K, 0.5, B, 1e-6, 1000, true);
 
    for (int i = 0; i < X.rows(); i++) {
      for (int j = 0; j < X.cols(); j++) {

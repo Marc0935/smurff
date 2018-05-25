@@ -219,7 +219,7 @@ MacauPrior* make_dense_prior(int nlatent, double* ptr, int nrows, int ncols, boo
    auto ret = new MacauPrior(0, 0);
    std::shared_ptr<Eigen::MatrixXd> Fmat_ptr = std::shared_ptr<MatrixXd>(Fmat);
    std::shared_ptr<DenseDoubleFeatSideInfo> side_info = std::make_shared<DenseDoubleFeatSideInfo>(Fmat_ptr);
-   ret->addSideInfo(side_info, 10.0, 1e-6, comp_FtF, true, false);
+   ret->addSideInfo(side_info, 10.0, 1e-6, 10, comp_FtF, true, false);
    ret->FtF_plus_beta.resize(Fmat->cols(), Fmat->cols());
    ret->Features->At_mul_A(ret->FtF_plus_beta);
    return ret;
