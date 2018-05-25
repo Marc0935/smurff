@@ -22,6 +22,8 @@ MacauPrior::MacauPrior(std::shared_ptr<BaseSession> session, uint32_t mode)
 {
    beta_precision = SideInfoConfig::BETA_PRECISION_DEFAULT_VALUE;
    tol = SideInfoConfig::TOL_DEFAULT_VALUE;
+   max_iter = SideInfoConfig::MAX_ITER_DEFAULT_VALUE;
+
 
    enable_beta_precision_sampling = Config::ENABLE_BETA_PRECISION_SAMPLING_DEFAULT_VALUE;
 }
@@ -104,7 +106,7 @@ void MacauPrior::sample_beta()
       sample_beta_cg();
 }
 
-void MacauPrior::addSideInfo(const std::shared_ptr<ISideInfo>& side_info_a, double beta_precision_a, double tolerance_a, bool direct_a, bool enable_beta_precision_sampling_a, bool throw_on_cholesky_error_a)
+void MacauPrior::addSideInfo(const std::shared_ptr<ISideInfo>& side_info_a, double beta_precision_a, double tolerance_a, int max_iter_a, bool direct_a, bool enable_beta_precision_sampling_a, bool throw_on_cholesky_error_a)
 {
    //FIXME: remove old code
 
@@ -114,6 +116,7 @@ void MacauPrior::addSideInfo(const std::shared_ptr<ISideInfo>& side_info_a, doub
    Features = side_info_a;
    beta_precision = beta_precision_a;
    tol = tolerance_a;
+   max_iter = max_iter_a;
    use_FtF = direct_a;
    enable_beta_precision_sampling = enable_beta_precision_sampling_a;
    throw_on_cholesky_error = throw_on_cholesky_error_a;
@@ -124,6 +127,7 @@ void MacauPrior::addSideInfo(const std::shared_ptr<ISideInfo>& side_info_a, doub
    side_info_values.push_back(side_info_a);
    beta_precision_values.push_back(beta_precision_a);
    tol_values.push_back(tolerance_a);
+   max_iter_values.push_back(max_iter_a);
    direct_values.push_back(direct_a);
    enable_beta_precision_sampling_values.push_back(enable_beta_precision_sampling_a);
    throw_on_cholesky_error_values.push_back(throw_on_cholesky_error_a);
@@ -169,6 +173,7 @@ std::ostream& MacauPrior::info(std::ostream &os, std::string indent)
    } else {
       os << "CG Solver" << std::endl;
       os << indent << "  with tolerance: " << std::scientific << tol << std::fixed << std::endl;
+      os << indent << "  with max iter: " << max_iter << std::fixed << std::endl;
    }
    os << indent << " BetaPrecision: " << beta_precision << std::endl;
    return os;
@@ -217,5 +222,5 @@ void MacauPrior::sample_beta_cg()
     Eigen::MatrixXd Ft_y;
     this->compute_Ft_y_omp(Ft_y);
 
-    Features->solve_blockcg(beta, beta_precision, Ft_y, tol, 32, 8, throw_on_cholesky_error);
+    Features->solve_blockcg(beta, beta_precision, Ft_y, tol, max_iter, 32, 8, throw_on_cholesky_error);
 }

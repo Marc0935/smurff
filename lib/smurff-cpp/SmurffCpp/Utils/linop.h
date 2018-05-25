@@ -12,9 +12,9 @@
 namespace smurff { namespace linop {
 
 template<typename T>
-void  solve_blockcg(Eigen::MatrixXd & X, T & t, double reg, Eigen::MatrixXd & B, double tol, const int blocksize, const int excess, bool throw_on_cholesky_error = false);
+void  solve_blockcg(Eigen::MatrixXd & X, T & t, double reg, Eigen::MatrixXd & B, double tol, int max_iter, const int blocksize, const int excess, bool throw_on_cholesky_error = false);
 template<typename T>
-int  solve_blockcg(Eigen::MatrixXd & X, T & t, double reg, Eigen::MatrixXd & B, double tol, bool throw_on_cholesky_error = false);
+int  solve_blockcg(Eigen::MatrixXd & X, T & t, double reg, Eigen::MatrixXd & B, double tol, int max_iter, bool throw_on_cholesky_error = false);
 
 void At_mul_A(Eigen::MatrixXd & out, SparseFeat & A);
 void At_mul_A(Eigen::MatrixXd & out, SparseDoubleFeat & A);
@@ -203,9 +203,9 @@ template<> inline void compute_uhat(Eigen::MatrixXd & uhat, Eigen::MatrixXd & de
 
 /** good values for solve_blockcg are blocksize=32 an excess=8 */
 template<typename T>
-inline void solve_blockcg(Eigen::MatrixXd & X, T & K, double reg, Eigen::MatrixXd & B, double tol, const int blocksize, const int excess, bool throw_on_cholesky_error) {
+inline void solve_blockcg(Eigen::MatrixXd & X, T & K, double reg, Eigen::MatrixXd & B, double tol, int max_iter, const int blocksize, const int excess, bool throw_on_cholesky_error) {
   if (B.rows() <= excess + blocksize) {
-    solve_blockcg(X, K, reg, B, tol, throw_on_cholesky_error);
+    solve_blockcg(X, K, reg, B, tol, max_iter, throw_on_cholesky_error);
     return;
   }
   // split B into blocks of size <blocksize> (+ excess if needed)
@@ -219,7 +219,7 @@ inline void solve_blockcg(Eigen::MatrixXd & X, T & K, double reg, Eigen::MatrixX
     Xblock.resize(nrows, X.cols());
 
     Bblock = B.block(i, 0, nrows, B.cols());
-    solve_blockcg(Xblock, K, reg, Bblock, tol, throw_on_cholesky_error);
+    solve_blockcg(Xblock, K, reg, Bblock, tol, max_iter, throw_on_cholesky_error);
     X.block(i, 0, nrows, X.cols()) = Xblock;
   }
 }
@@ -232,7 +232,7 @@ inline void solve_blockcg(Eigen::MatrixXd & X, T & K, double reg, Eigen::MatrixX
 //   B = n x m matrix
 //
 template<typename T>
-inline int solve_blockcg(Eigen::MatrixXd & X, T & K, double reg, Eigen::MatrixXd & B, double tol, bool throw_on_cholesky_error) {
+inline int solve_blockcg(Eigen::MatrixXd & X, T & K, double reg, Eigen::MatrixXd & B, double tol, int max_iter, bool throw_on_cholesky_error) {
   // initialize
   const int nfeat = B.cols();
   const int nrhs  = B.rows();
@@ -286,7 +286,7 @@ inline int solve_blockcg(Eigen::MatrixXd & X, T & K, double reg, Eigen::MatrixXd
 
   // CG iteration:
   int iter = 0;
-  for (iter = 0; iter < 100000; iter++) {
+  for (iter = 0; iter < max_iter; iter++) {
     // KP = K * P
     ////double t1 = tick();
     AtA_mul_B_switch(KP, K, reg, P, KPtmp);

@@ -8,4 +8,5 @@ cdef extern from "<SmurffCpp/Configs/SideInfoConfig.h>" namespace "smurff":
         MacauPriorConfigItem() except +
         void setSideInfo(shared_ptr[MatrixConfig] value)
         void setTol(double value)
+        void setMaxIter(int value)
         void setDirect(bool value)

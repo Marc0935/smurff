@@ -15,8 +15,10 @@ namespace smurff
    public:
       static double BETA_PRECISION_DEFAULT_VALUE;
       static double TOL_DEFAULT_VALUE;
+      static int MAX_ITER_DEFAULT_VALUE;
    private:
       double m_tol;
+      int m_max_iter;
       bool m_direct;
       bool m_throw_on_cholesky_error;
 
@@ -44,6 +46,16 @@ namespace smurff
       void setTol(double value)
       {
          m_tol = value;
+      }
+
+      int getMaxIter() const
+      {
+         return m_max_iter;
+      }
+
+      int setMaxIter(int value)
+      {
+         m_max_iter = value;
       }
 
       bool getDirect() const

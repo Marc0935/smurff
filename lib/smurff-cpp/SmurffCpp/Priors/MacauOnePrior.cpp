@@ -45,7 +45,7 @@ const Eigen::VectorXd MacauOnePrior::getMu(int n) const
    return this->mu + Uhat.col(n);
 }
 
-void MacauOnePrior::addSideInfo(const std::shared_ptr<ISideInfo>& side_info_a, double beta_precision_a, double tolerance_a, bool direct_a, bool enable_beta_precision_sampling_a, bool)
+void MacauOnePrior::addSideInfo(const std::shared_ptr<ISideInfo>& side_info_a, double beta_precision_a, double tolerance_a, int max_iter_a, bool direct_a, bool enable_beta_precision_sampling_a, bool)
 {
    //FIXME: remove old code
 

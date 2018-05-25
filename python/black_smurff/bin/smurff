@@ -51,6 +51,7 @@ options = {
         "group1":         { "group": "For the macau prior"},
         "lambda-beta":    { "metavar": "NUM", "type": float,  "default": 10.0, "help":  "10.0  initial value of lambda beta"},
         "tol":            { "metavar": "NUM", "type": float,   "default": 1e-6, "help":  "1e-6  tolerance for CG"},
+        "max_iter":       { "metavar": "NUM", "type": int,   "default": 10, "help":  "max number of iters for CG"},
         #unsupported
         "direct":         { "default": False, "action": "store_true", "help":  "Use Cholesky decomposition i.o. CG Solver"},
 }

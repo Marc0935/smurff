@@ -45,9 +45,9 @@ Eigen::MatrixXd DenseDoubleFeatSideInfo::A_mul_B(Eigen::MatrixXd& A)
    return smurff::linop::A_mul_B(A, *m_side_info);
 }
 
-void DenseDoubleFeatSideInfo::solve_blockcg(Eigen::MatrixXd& X, double reg, Eigen::MatrixXd& B, double tol, const int blocksize, const int excess, bool throw_on_cholesky_error)
+void DenseDoubleFeatSideInfo::solve_blockcg(Eigen::MatrixXd& X, double reg, Eigen::MatrixXd& B, double tol, int max_iter, const int blocksize, const int excess, bool throw_on_cholesky_error)
 {
-   smurff::linop::solve_blockcg(X, *m_side_info, reg, B, tol, blocksize, excess, throw_on_cholesky_error);
+   smurff::linop::solve_blockcg(X, *m_side_info, reg, B, tol, max_iter, blocksize, excess, throw_on_cholesky_error);
 }
 
 Eigen::VectorXd DenseDoubleFeatSideInfo::col_square_sum()

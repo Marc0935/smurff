@@ -37,7 +37,7 @@ namespace smurff {
 
       Eigen::MatrixXd A_mul_B(Eigen::MatrixXd& A) override;
 
-      void solve_blockcg(Eigen::MatrixXd& X, double reg, Eigen::MatrixXd& B, double tol, const int blocksize, const int excess, bool throw_on_cholesky_error = false) override;
+      void solve_blockcg(Eigen::MatrixXd& X, double reg, Eigen::MatrixXd& B, double tol, int max_iter, const int blocksize, const int excess, bool throw_on_cholesky_error = false) override;
 
       Eigen::VectorXd col_square_sum() override;
 

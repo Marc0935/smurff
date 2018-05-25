@@ -59,12 +59,12 @@ std::shared_ptr<ILatentPrior> PriorFactory::create_macau_prior(std::shared_ptr<S
       {
       case NoiseTypes::fixed:
          {
-            prior->addSideInfo(side_info, noise_config.getPrecision(), config_item->getTol(), config_item->getDirect(), false, config_item->getThrowOnCholeskyError());
+            prior->addSideInfo(side_info, noise_config.getPrecision(), config_item->getTol(), config_item->getMaxIter(), config_item->getDirect(), false, config_item->getThrowOnCholeskyError());
          }
          break;
       case NoiseTypes::adaptive:
          {
-            prior->addSideInfo(side_info, noise_config.getPrecision(), config_item->getTol(), config_item->getDirect(), true, config_item->getThrowOnCholeskyError());
+            prior->addSideInfo(side_info, noise_config.getPrecision(), config_item->getTol(), config_item->getMaxIter(), config_item->getDirect(), true, config_item->getThrowOnCholeskyError());
          }
          break;
       default:

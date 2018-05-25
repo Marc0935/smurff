@@ -150,9 +150,9 @@ def center_and_scale(m, mode, with_mean=True, with_std=True):
     m : {array-like, sparse matrix}
         The data to center and scale.
     mode : str 
-        "rows": center/scale each row indepently
-        "cols": center/scale each column idependently
-        "global": center/scale using global meand and/or standard deviation/
+        * "rows": center/scale each row indepently
+        * "cols": center/scale each column idependently
+        * "global": center/scale using global meand and/or standard deviation/
     with_mean : boolean, True by default
         If True, center the data before scaling.
     with_std : boolean, True by default

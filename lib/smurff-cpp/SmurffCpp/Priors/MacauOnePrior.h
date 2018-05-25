@@ -56,7 +56,7 @@ public:
    //FIXME: tolerance_a and direct_a are not really used. 
    //should remove later after PriorFactory is properly implemented. 
    //No reason generalizing addSideInfo between priors
-   void addSideInfo(const std::shared_ptr<ISideInfo>& side_info_a, double beta_precision_a, double tolerance_a, bool direct_a, bool enable_beta_precision_sampling_a, bool throw_on_cholesky_error_a);
+   void addSideInfo(const std::shared_ptr<ISideInfo>& side_info_a, double beta_precision_a, double tolerance_a, int max_iter_a, bool direct_a, bool enable_beta_precision_sampling_a, bool throw_on_cholesky_error_a);
 
 public:
 

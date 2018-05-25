@@ -28,7 +28,7 @@ namespace smurff {
 
       virtual Eigen::MatrixXd A_mul_B(Eigen::MatrixXd& A) = 0;
 
-      virtual void solve_blockcg(Eigen::MatrixXd& X, double reg, Eigen::MatrixXd& B, double tol, const int blocksize, const int excess, bool throw_on_cholesky_error = false) = 0;
+      virtual void solve_blockcg(Eigen::MatrixXd& X, double reg, Eigen::MatrixXd& B, double tol, int max_iter, const int blocksize, const int excess, bool throw_on_cholesky_error = false) = 0;
 
       virtual Eigen::VectorXd col_square_sum() = 0;
 

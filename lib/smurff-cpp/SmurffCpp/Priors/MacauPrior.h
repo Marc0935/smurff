@@ -35,6 +35,7 @@ public:
    std::vector<std::shared_ptr<ISideInfo> > side_info_values;
    std::vector<double> beta_precision_values;
    std::vector<double> tol_values;
+   std::vector<int> max_iter_values;
    std::vector<bool> direct_values;
    std::vector<bool> enable_beta_precision_sampling_values;
    std::vector<bool> throw_on_cholesky_error_values;
@@ -46,6 +47,7 @@ public:
    std::shared_ptr<ISideInfo> Features;  // side information
    double beta_precision;
    double tol = 1e-6;
+   int max_iter = 10;
    bool use_FtF;
    bool enable_beta_precision_sampling;
    bool throw_on_cholesky_error;
@@ -71,7 +73,7 @@ public:
 
 public:
 
-   void addSideInfo(const std::shared_ptr<ISideInfo>& side_info_a, double beta_precision_a, double tolerance_a, bool direct_a, bool enable_beta_precision_sampling_a, bool throw_on_cholesky_error_a);
+   void addSideInfo(const std::shared_ptr<ISideInfo>& side_info_a, double beta_precision_a, double tolerance_a, int max_iter_a, bool direct_a, bool enable_beta_precision_sampling_a, bool throw_on_cholesky_error_a);
 
 public:
 
