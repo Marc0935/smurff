@@ -1,6 +1,6 @@
 #include "ScarceMatrixData.h"
-#include "Utils/counters.h"
 
+#include <SmurffCpp/Utils/counters.h>
 #include <SmurffCpp/VMatrixExprIterator.hpp>
 #include <SmurffCpp/ConstVMatrixExprIterator.hpp>
 
