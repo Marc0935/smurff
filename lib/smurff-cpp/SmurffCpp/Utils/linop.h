@@ -2,7 +2,6 @@
 
 #include <Eigen/Dense>
 
-#include <SmurffCpp/Utils/chol.h>
 #include <SmurffCpp/Utils/MatrixUtils.h>
 #include <SmurffCpp/Utils/Error.h>
 

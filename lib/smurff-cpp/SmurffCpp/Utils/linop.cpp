@@ -8,7 +8,6 @@
 
 #include <SmurffCpp/Utils/Error.h>
 
-#include "chol.h"
 #include "linop.h"
 #include "omp_util.h"
 
