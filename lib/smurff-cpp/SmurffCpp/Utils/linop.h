@@ -106,7 +106,7 @@ inline int solve_blockcg(Eigen::MatrixXd & X, T & K, double reg, Eigen::MatrixXd
     // KP = K * P
     KP.noalias() = (K.transpose() * (K * P.transpose())).transpose() + reg * P;
     PtKP = P * KP.transpose();
-    A = PtKP.llt().solve(*RtR).transpose();
+    A = PtKP.llt().solve(RtR).transpose();
     
     #pragma omp parallel for schedule(guided)
     for (int block = 0; block < nblocks; block++) 
@@ -124,13 +124,13 @@ inline int solve_blockcg(Eigen::MatrixXd & X, T & K, double reg, Eigen::MatrixXd
     RtR2 = R * R.transpose();
     makeSymmetric(RtR2);
 
-    Eigen::VectorXd d = RtR2->diagonal();
+    Eigen::VectorXd d = RtR2.diagonal();
     //std::cout << "[ iter " << iter << "] " << d.cwiseSqrt() << "\n";
     if ( (d.array() < tolsq).all()) {
       break;
     }
     // Psi = (R R') \ R2 R2'
-    Psi  = RtR.llt().solve(*RtR2).transpose());
+    Psi  = RtR.llt().solve(RtR2).transpose();
     ////double t5 = tick();
 
     // P = R + Psi' * P (P and R are already transposed)

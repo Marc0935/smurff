@@ -11,9 +11,6 @@
 
 namespace smurff {
 
-//Why remove init method and put everything in constructor if we have
-//init method in other priors and the other method addSideInfo which we use in pair
-
 class MacauOnePrior : public NormalOnePrior
 {
 public:
@@ -53,10 +50,7 @@ public:
    const Eigen::VectorXd getMu(int n) const override;
 
 public:
-   //FIXME: tolerance_a and direct_a are not really used. 
-   //should remove later after PriorFactory is properly implemented. 
-   //No reason generalizing addSideInfo between priors
-   void addSideInfo(const std::shared_ptr<ISideInfo>& side_info_a, double beta_precision_a, double tolerance_a, int max_iter_a, bool direct_a, bool enable_beta_precision_sampling_a, bool throw_on_cholesky_error_a);
+   void addSideInfo(const SideInfoConfig &);
 
 public:
 

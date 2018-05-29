@@ -4,10 +4,11 @@
 
 #include <Eigen/Dense>
 
-class SideInfoConfig;
-
 namespace smurff
 {
+
+class SideInfoConfig;
+class MacauPrior;
 
 class ISideInfo
 {

@@ -45,26 +45,9 @@ const Eigen::VectorXd MacauOnePrior::getMu(int n) const
    return this->mu + Uhat.col(n);
 }
 
-void MacauOnePrior::addSideInfo(const std::shared_ptr<ISideInfo>& side_info_a, double beta_precision_a, double tolerance_a, int max_iter_a, bool direct_a, bool enable_beta_precision_sampling_a, bool)
+void MacauOnePrior::addSideInfo(const SideInfoConfig &)
 {
-   //FIXME: remove old code
-
-   // old code
-
-   Features = side_info_a;
-   bp0 = beta_precision_a;
-   enable_beta_precision_sampling = enable_beta_precision_sampling_a;
-
-   // new code
-
-   // side information
-   side_info_values.push_back(side_info_a);
-   beta_precision_values.push_back(beta_precision_a);
-   enable_beta_precision_sampling_values.push_back(enable_beta_precision_sampling_a);
-
-   // other code
-
-   F_colsq = Features->col_square_sum();
+   //F_colsq = Features->col_square_sum();
 }
 
 void MacauOnePrior::sample_beta(const Eigen::MatrixXd &U)
@@ -95,7 +78,7 @@ void MacauOnePrior::sample_beta(const Eigen::MatrixXd &U)
       {
          Eigen::VectorXd zx(dcount), delta_beta(dcount), randvals(dcount);
          // zx = Z[dstart : dstart + dcount, :] * F[:, f]
-         Features->At_mul_Bt(zx, f, Z);
+         ///Features->At_mul_Bt(zx, f, Z);
          // TODO: check if sampling randvals for whole [nfeat x dcount] matrix works faster
          bmrandn_single_thread(randvals);
 
@@ -111,7 +94,7 @@ void MacauOnePrior::sample_beta(const Eigen::MatrixXd &U)
             beta(dx, f) = beta_new;
          }
          // Z[dstart : dstart + dcount, :] += F[:, f] * delta_beta'
-         Features->add_Acol_mul_bt(Z, f, delta_beta);
+         //Features->add_Acol_mul_bt(Z, f, delta_beta);
       }
    }
 }
