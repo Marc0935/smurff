@@ -7,8 +7,6 @@
 
 #include <SmurffCpp/Configs/MatrixConfig.h>
 
-#include <SmurffCpp/SideInfo/LibFastSparseDependency.h>
-
 #include <SmurffCpp/Utils/Error.h>
 
 namespace smurff { namespace matrix_utils {

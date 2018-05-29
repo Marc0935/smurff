@@ -34,7 +34,7 @@ void MacauOnePrior::update_prior()
 {
    sample_mu_lambda(U());
    sample_beta(U());
-   Features->compute_uhat(Uhat, beta);
+   //Features->compute_uhat(Uhat, beta);
 
    if (enable_beta_precision_sampling)
       sample_beta_precision();

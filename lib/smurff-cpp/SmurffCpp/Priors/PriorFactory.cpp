@@ -8,9 +8,9 @@
 
 #include <SmurffCpp/Utils/Error.h>
 
-#include <SmurffCpp/SideInfo/DenseDoubleFeatSideInfo.h>
-#include <SmurffCpp/SideInfo/SparseDoubleFeatSideInfo.h>
-#include <SmurffCpp/SideInfo/SparseFeatSideInfo.h>
+#include <SmurffCpp/SideInfo/DenseDoubleSideInfo.h>
+#include <SmurffCpp/SideInfo/SparseDoubleSideInfo.h>
+#include <SmurffCpp/SideInfo/SparseBinarySideinfo.h>
 
 #include <SmurffCpp/Utils/MatrixUtils.h>
 
@@ -22,7 +22,7 @@ using namespace Eigen;
 std::shared_ptr<ISideInfo> PriorFactory::side_info_config_to_dense_features(std::shared_ptr<MatrixConfig> sideinfoConfig, int mode)
 {
    auto side_info_ptr = std::make_shared<Eigen::MatrixXd>(matrix_utils::dense_to_eigen(*sideinfoConfig));
-   return std::make_shared<DenseDoubleFeatSideInfo>(side_info_ptr);
+   return std::make_shared<DenseDoubleSideInfo>(side_info_ptr);
 }
 
 std::shared_ptr<ISideInfo> PriorFactory::side_info_config_to_sparse_binary_features(std::shared_ptr<MatrixConfig> sideinfoConfig, int mode)
@@ -35,7 +35,7 @@ std::shared_ptr<ISideInfo> PriorFactory::side_info_config_to_sparse_binary_featu
    const std::uint32_t* cols = sideinfoConfig->getCols().data();
 
    auto side_info_ptr = std::make_shared<SparseFeat>(nrow, ncol, nnz, (int *)rows,  (int *)cols);
-   return std::make_shared<SparseFeatSideInfo>(side_info_ptr);
+   return std::make_shared<SparseBinarySideinfo>(side_info_ptr);
 }
 
 std::shared_ptr<ISideInfo> PriorFactory::side_info_config_to_sparse_features(std::shared_ptr<MatrixConfig> sideinfoConfig, int mode)
@@ -49,7 +49,7 @@ std::shared_ptr<ISideInfo> PriorFactory::side_info_config_to_sparse_features(std
    const double*        vals = sideinfoConfig->getValues().data();
 
    auto side_info_ptr = std::make_shared<SparseDoubleFeat>(nrow, ncol, nnz, (int *)rows, (int *)cols, (double *)vals);
-   return std::make_shared<SparseDoubleFeatSideInfo>(side_info_ptr);
+   return std::make_shared<SparseDoubleSideInfo>(side_info_ptr);
 }
 
 //-------

@@ -172,12 +172,12 @@ FILE (GLOB SIDE_INFO_FILES "../SideInfo/ISideInfo.h"
                            "../SideInfo/SparseDoubleFeat.h"
                            "../SideInfo/DenseDoubleFeat.h"
                            "../SideInfo/LibFastSparseDependency.h"
-                           "../SideInfo/DenseDoubleFeatSideInfo.h"
-                           "../SideInfo/DenseDoubleFeatSideInfo.cpp"
-                           "../SideInfo/SparseDoubleFeatSideInfo.h"
-                           "../SideInfo/SparseDoubleFeatSideInfo.cpp"
-                           "../SideInfo/SparseFeatSideInfo.h"
-                           "../SideInfo/SparseFeatSideInfo.cpp"
+                           "../SideInfo/DenseDoubleSideInfo.h"
+                           "../SideInfo/DenseDoubleSideInfo.cpp"
+                           "../SideInfo/SparseDoubleSideInfo.h"
+                           "../SideInfo/SparseDoubleSideInfo.cpp"
+                           "../SideInfo/SparseBinarySideinfo.h"
+                           "../SideInfo/SparseBinarySideinfo.cpp"
                         )
 source_group ("Side Info" FILES ${SIDE_INFO_FILES})
 

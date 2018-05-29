@@ -44,5 +44,15 @@ public:
 
   void update_prior() override;
   std::ostream &status(std::ostream &os, std::string indent) const override;
+
+  const Eigen::MatrixXd &getLambda() const
+  {
+     return Lambda;
+  }
+
+  const Eigen::VectorXd &getMu() const
+  {
+     return mu;
+  }
 };
 }

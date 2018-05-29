@@ -32,8 +32,6 @@
 #include <SmurffCpp/DataMatrices/SparseMatrixData.h>
 #include <SmurffCpp/DataMatrices/DenseMatrixData.h>
 
-#include <SmurffCpp/SideInfo/DenseDoubleFeatSideInfo.h>
-
 // https://github.com/catchorg/Catch2/blob/master/docs/assertions.md#floating-point-comparisons
 // By default Catch.hpp sets epsilon to std::numeric_limits<float>::epsilon()*100
 #define APPROX_EPSILON std::numeric_limits<float>::epsilon()*100
@@ -191,7 +189,7 @@ MacauPrior* make_dense_prior(int nlatent, double* ptr, int nrows, int ncols, boo
    }
    auto ret = new MacauPrior(0, 0);
    std::shared_ptr<Eigen::MatrixXd> Fmat_ptr = std::shared_ptr<MatrixXd>(Fmat);
-   std::shared_ptr<DenseDoubleFeatSideInfo> side_info = std::make_shared<DenseDoubleFeatSideInfo>(Fmat_ptr);
+   std::shared_ptr<DenseDoubleSideInfo> side_info = std::make_shared<DenseDoubleSideInfo>(Fmat_ptr);
    ret->addSideInfo(side_info, 10.0, 1e-6, 10, comp_FtF, true, false);
    ret->FtF_plus_beta.resize(Fmat->cols(), Fmat->cols());
    ret->Features->At_mul_A(ret->FtF_plus_beta);
@@ -206,7 +204,7 @@ TEST_CASE("macauprior/make_dense_prior", "Making MacauPrior with MatrixXd") {
 
     Eigen::MatrixXd Ftrue(3, 2);
     Ftrue <<  0.1, 0.3, 0.4, 0.11, -0.7, 0.23;
-    auto features_downcast1 = std::dynamic_pointer_cast<DenseDoubleFeatSideInfo>(prior->Features); //for the purpose of the test
+    auto features_downcast1 = std::dynamic_pointer_cast<DenseDoubleSideInfo>(prior->Features); //for the purpose of the test
     REQUIRE( (*(features_downcast1->get_features()) - Ftrue).norm() == Approx(0) );
     Eigen::MatrixXd tmp = Eigen::MatrixXd::Zero(2, 2);
     tmp.triangularView<Eigen::Lower>()  = prior->FtF_plus_beta;
@@ -220,7 +218,7 @@ TEST_CASE("macauprior/make_dense_prior", "Making MacauPrior with MatrixXd") {
               -0.7,  0.3,
               0.11, 0.23;
 
-    auto features_downcast2 = std::dynamic_pointer_cast<DenseDoubleFeatSideInfo>(prior2->Features); //for the purpose of the test
+    auto features_downcast2 = std::dynamic_pointer_cast<DenseDoubleSideInfo>(prior2->Features); //for the purpose of the test
     REQUIRE( (*(features_downcast2->get_features()) - Ftrue2).norm() == Approx(0) );
     Eigen::MatrixXd tmp2 = Eigen::MatrixXd::Zero(2, 2);
     tmp2.triangularView<Eigen::Lower>()  = prior2->FtF_plus_beta;

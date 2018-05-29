@@ -7,6 +7,8 @@ using namespace smurff;
 
 static NoiseConfig fixed_ncfg(NoiseTypes::fixed);
 
+#if 0
+
 TEST_CASE( "SparseFeat/At_mul_A_bcsr", "[At_mul_A] for BinaryCSR" ) 
 {
    int rows[9] = { 0, 3, 3, 2, 5, 4, 1, 2, 4 };
@@ -117,12 +119,14 @@ TEST_CASE( "SparseFeat/compute_uhat", "compute_uhat" )
      }
    }
 }
+#endif
+#if 0
 
-TEST_CASE( "SparseFeat/solve_blockcg", "BlockCG solver (1rhs)" ) 
+TEST_CASE( "SparseMatrix/solve_blockcg", "BlockCG solver (1rhs)" ) 
 {
    int rows[9] = { 0, 3, 3, 2, 5, 4, 1, 2, 4 };
    int cols[9] = { 1, 0, 2, 1, 3, 0, 1, 3, 2 };
-   SparseFeat sf(6, 4, 9, rows, cols);
+   SparseMatrix sf(6,4); // sf(6, 4, 9, rows, cols);
    Eigen::MatrixXd B(1, 4), X(1, 4), X_true(1, 4);
  
    B << 0.56,  0.55,  0.3 , -1.78;
@@ -158,7 +162,9 @@ TEST_CASE( "SparseFeat/solve_blockcg_1_0", "BlockCG solver (3rhs separately)" )
      }
    }
 }
+#endif
 
+#if 0
 TEST_CASE( "MatrixXd/compute_uhat", "compute_uhat for MatrixXd" ) {
    Eigen::MatrixXd beta(2, 4), feat(6, 4), uhat(2, 6), uhat_true(2, 6);
    beta << 0.56,  0.55,  0.3 , -1.78,
@@ -178,6 +184,7 @@ TEST_CASE( "MatrixXd/compute_uhat", "compute_uhat for MatrixXd" ) {
      }
    }
 }
+#endif
 
 TEST_CASE( "linop/solve_blockcg_dense/fail", "BlockCG solver for dense (3rhs separately)" ) 
 {
@@ -232,6 +239,7 @@ TEST_CASE( "linop/solve_blockcg_dense/ok", "BlockCG solver for dense (3rhs separ
    }
 }
 
+#if 0
 TEST_CASE( "linop/A_mul_At_omp", "A_mul_At with OpenMP" ) 
 {
    init_bmrng(12345);
@@ -576,3 +584,4 @@ TEST_CASE("linop/add_Acol_mul_bt", "add_Acol_mul_bt SparseDoubleFeat vs add_Acol
       REQUIRE(matrix_utils::equals(Z_sparse, Z_dense));
    }
 }
+#endif

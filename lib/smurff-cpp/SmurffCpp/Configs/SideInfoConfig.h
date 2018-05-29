@@ -21,6 +21,7 @@ namespace smurff
       int m_max_iter;
       bool m_direct;
       bool m_throw_on_cholesky_error;
+      bool m_sample_beta_precision;
 
       std::shared_ptr<MatrixConfig> m_sideInfo; //side info matrix for macau and macauone prior
 
@@ -78,6 +79,15 @@ namespace smurff
          m_throw_on_cholesky_error = value;
       }
 
+      bool getSampleBetaPrecision() const
+      {
+         return m_sample_beta_precision;
+      }
+
+      void setSampleBetaPrecision(bool value)
+      {
+         m_sample_beta_precision = value;
+      }
    public:
       void save(INIFile& writer, std::size_t prior_index, std::size_t config_item_index) const;
 
