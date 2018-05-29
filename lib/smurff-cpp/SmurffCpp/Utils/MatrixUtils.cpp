@@ -69,20 +69,6 @@ Eigen::SparseMatrix<double> smurff::matrix_utils::sparse_to_eigen(const smurff::
    return out;
 }
 
-Eigen::MatrixXd smurff::matrix_utils::sparse_to_dense(const SparseBinaryMatrix& in)
-{
-    Eigen::MatrixXd out = Eigen::MatrixXd::Zero(in.nrow, in.ncol);
-    for(int i=0; i<in.nnz; ++i) out(in.rows[i], in.cols[i]) = 1.;
-    return out;
-}
-
-Eigen::MatrixXd smurff::matrix_utils::sparse_to_dense(const SparseDoubleMatrix& in)
-{
-    Eigen::MatrixXd out = Eigen::MatrixXd::Zero(in.nrow, in.ncol);
-    for(int i=0; i<in.nnz; ++i) out(in.rows[i], in.cols[i]) = in.vals[i];
-    return out;
-}
-
 std::ostream& smurff::matrix_utils::operator << (std::ostream& os, const MatrixConfig& mc)
 {
    const std::vector<std::uint32_t>& rows = mc.getRows();

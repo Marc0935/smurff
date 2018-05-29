@@ -20,12 +20,6 @@ namespace smurff { namespace matrix_utils {
 
    Eigen::MatrixXd dense_to_eigen(smurff::MatrixConfig& matrixConfig);
 
-   // Conversion of libfastsparse matrices to dense eigen matrix - do we need it?
-
-   Eigen::MatrixXd sparse_to_dense(const SparseBinaryMatrix& in);
-
-   Eigen::MatrixXd sparse_to_dense(const SparseDoubleMatrix& in);
-
    std::ostream& operator << (std::ostream& os, const MatrixConfig& mc);
 
    bool equals(const Eigen::MatrixXd& m1, const Eigen::MatrixXd& m2, double precision = std::numeric_limits<double>::epsilon());
