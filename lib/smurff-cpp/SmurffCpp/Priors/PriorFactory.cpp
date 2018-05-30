@@ -13,46 +13,33 @@
 using namespace smurff;
 using namespace Eigen;
 
-//create macau prior features
-
-//-------
-
-std::shared_ptr<ILatentPrior> PriorFactory::create_macau_prior(std::shared_ptr<Session> session, PriorTypes prior_type,
-   const std::vector<std::shared_ptr<SideInfoConfig> >& config_items)
-{
-   if(prior_type == PriorTypes::macau || prior_type == PriorTypes::default_prior)
-   {
-      return create_macau_prior<MacauPrior>(session, config_items);
-   }
-   else if(prior_type == PriorTypes::macauone)
-   {
-      return create_macau_prior<MacauOnePrior>(session, config_items);
-   }
-   else
-   {
-      THROWERROR("Unknown prior with side info: " + priorTypeToString(prior_type));
-   }
-}
-
 std::shared_ptr<ILatentPrior> PriorFactory::create_prior(std::shared_ptr<Session> session, int mode)
 {
    PriorTypes priorType = session->getConfig().getPriorTypes().at(mode);
+   std::shared_ptr<ILatentPrior> prior;
 
    switch(priorType)
    {
    case PriorTypes::normal:
    case PriorTypes::default_prior:
-      return std::shared_ptr<NormalPrior>(new NormalPrior(session, -1));
+      prior = std::shared_ptr<NormalPrior>(new NormalPrior(session, -1));
    case PriorTypes::spikeandslab:
-      return std::shared_ptr<SpikeAndSlabPrior>(new SpikeAndSlabPrior(session, -1));
+      prior = std::shared_ptr<SpikeAndSlabPrior>(new SpikeAndSlabPrior(session, -1));
    case PriorTypes::normalone:
-      return std::shared_ptr<NormalOnePrior>(new NormalOnePrior(session, -1));
+      prior = std::shared_ptr<NormalOnePrior>(new NormalOnePrior(session, -1));
    case PriorTypes::macau:
+      prior = std::shared_ptr<MacauPrior>(new MacauPrior(session, -1));
    case PriorTypes::macauone:
-      return create_macau_prior<PriorFactory>(session, mode, priorType, session->getConfig().getSideInfoConfigs(mode));
+      prior = std::shared_ptr<MacauOnePrior>(new MacauOnePrior(session, -1));
+
    default:
-      {
-         THROWERROR("Unknown prior: " + priorTypeToString(priorType));
-      }
+      THROWERROR("Unknown prior: " + priorTypeToString(priorType));
    }
+
+   for (auto side : session->getConfig().getSideInfoConfigs(mode))
+   {
+      prior->addSideInfo(*side);
+   }
+
+   return prior;
 }

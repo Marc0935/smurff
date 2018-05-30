@@ -32,7 +32,8 @@ void MacauPrior::init()
 
    for(auto &f : features)
    {
-      THROWERROR_ASSERT_MSG(f->rows() == num_cols(), "Number of rows in train must be equal to number of rows in features");
+      THROWERROR_ASSERT_MSG(f->num_item() == num_cols(), 
+         "Number of rows in train must be equal to number of rows in features");
       f->init();
    }
 }
@@ -43,15 +44,15 @@ void MacauPrior::update_prior()
    {
       Eigen::MatrixXd BBt = Eigen::MatrixXd::Zero(num_latent(), num_latent());
       Eigen::MatrixXd Ures = U();
-      std::uint64_t cols = 0;
+      std::uint64_t num_feat = 0;
       
       for(auto f : features) {
          BBt.noalias() += f->getBBt();
          Ures.noalias() -= f->getUhat();
-         cols += f->cols();
+         num_feat += f->num_feat();
       }
 
-      std::tie(mu, Lambda) = CondNormalWishart(Ures, mu0, b0, WI + BBt, df + cols);
+      std::tie(mu, Lambda) = CondNormalWishart(Ures, mu0, b0, WI + BBt, df + num_feat);
    }
 
    // update beta, uhat and beta_precision

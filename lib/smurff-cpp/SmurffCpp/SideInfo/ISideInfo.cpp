@@ -24,6 +24,26 @@ ISideInfo::~ISideInfo()
 {
 }
 
+int ISideInfo::num_latent() const
+{
+   return m_prior.num_latent();
+}
+
+const Eigen::MatrixXd &ISideInfo::getUhat() const
+{
+   return Uhat;
+}
+
+const Eigen::MatrixXd &ISideInfo::getBeta() const
+{
+   return beta;
+}
+
+const Eigen::MatrixXd &ISideInfo::getBBt() const
+{
+   return BBt;
+}
+
 void ISideInfo::init()
 {
    if (m_config.getDirect())
@@ -32,34 +52,43 @@ void ISideInfo::init()
       FtF_plus_beta.diagonal().array() += beta_precision;
    }
 
-   Uhat = MatrixXd::Zero(num_latent(), rows());
-   beta = MatrixXd::Zero(num_latent(), cols());
+   Uhat = MatrixXd::Zero(num_latent(), num_item());
+   beta = MatrixXd::Zero(num_latent(), num_feat());
 }
 
-template <typename FType>
-class SideInfo : public ISideInfo
+template <typename FeaturesType>
+class SideInfoTempl : public ISideInfo
 {
  public:
-   SideInfo::SideInfo(const SideInfoConfig &c, const MacauPrior &prior)
+   SideInfoTempl(const SideInfoConfig &c, const MacauPrior &prior)
        : ISideInfo(c, prior)
    {
    }
 
+   int num_feat() const override { return F.cols(); }
+   int num_item() const override { return F.rows(); }
+   uint64_t nnz() const override { return F.nonZeros(); }
+
  private:
-   Ftype F, Ft;
+   FeaturesType F, Ft;
 
    void sample_beta() override
    {
-      const int num_feat = beta.cols();
+      const MatrixXd &U = m_prior.U();
       // Ft_y = (U .- mu + Normal(0, Lambda^-1)) * F + sqrt(lambda_beta) * Normal(0, Lambda^-1)
       // Ft_y is [ D x F ] matrix
-      MatrixXd tmp = (U() + MvNormal_pre(m_prior.getLambda(), U().cols())).colwise() - m_prior.getMu();
+      auto tmp = (U + MvNormal_pre(m_prior.getLambda(), num_item())).colwise() - m_prior.getMu();
       MatrixXd Ft_y = tmp * F + sqrt(beta_precision) * MvNormal_prec(m_prior.getLambda(), num_feat());
 
       if (m_config.getDirect())
          beta = FtF_plus_beta.llt().solve(Ft_y.transpose()).transpose();
       else
-         solve_blockcg(beta, beta_precision, Ft_y, m_config.tol, m_config.max_iter, 32, 8, m_config.throw_on_cholesky_error);
+      {
+         double tol = m_config.getTol();
+         double max_iter = m_config.getMaxIter();
+         double throw_on_chol = m_config.getThrowOnCholeskyError();
+         solve_blockcg(beta, beta_precision, Ft_y, tol, max_iter, 32, 8, throw_on_chol);
+      }
 
       //-- compute Uhat
       // uhat       - [D x N] dense matrix
@@ -72,7 +101,7 @@ class SideInfo : public ISideInfo
       if (m_config.getSampleBetaPrecision())
       {
          double old_beta = beta_precision;
-         beta_precision = sample_beta_precision(beta, this->Lambda, beta_precision_nu0, beta_precision_mu0);
+         beta_precision = sample_beta_precision();
          FtF_plus_beta.diagonal().array() += beta_precision - old_beta;
       }
    }
@@ -99,7 +128,7 @@ std::ostream &ISideInfo::info(std::ostream &os, std::string indent)
    if (m_config.getDirect())
    {
       os << "Cholesky Decomposition";
-      double needs_gb = (double)cols() / 1024. * (double)cols() / 1024. / 1024.;
+      double needs_gb = (double)num_feat() / 1024. * (double)num_feat() / 1024. / 1024.;
       if (needs_gb > 1.0)
          os << " (needing " << needs_gb << " GB of memory)";
       os << std::endl;
@@ -117,26 +146,19 @@ std::ostream &ISideInfo::info(std::ostream &os, std::string indent)
 std::ostream &ISideInfo::status(std::ostream &os, std::string indent) const
 {
    os << indent << "FtF_plus_beta = " << FtF_plus_beta.norm() << std::endl;
-   os << indent << "HyperU        = " << HyperU.norm() << std::endl;
-   os << indent << "HyperU2       = " << HyperU2.norm() << std::endl;
    os << indent << "Beta          = " << beta.norm() << std::endl;
    os << indent << "beta_precision= " << beta_precision << std::endl;
-   os << indent << "Ft_y          = " << Ft_y.norm() << std::endl;
    return os;
 }
 
-std::pair<double, double> ISideInfo::posterior_beta_precision(Eigen::MatrixXd &beta, Eigen::MatrixXd &Lambda_u, double nu, double mu)
+double ISideInfo::sample_beta_precision()
 {
+   const double nu = beta_precision_nu0;
+   const double mu =  beta_precision_mu0;
    Eigen::MatrixXd BB = beta * beta.transpose();
    double nux = nu + beta.rows() * beta.cols();
-   double mux = mu * nux / (nu + mu * (BB.selfadjointView<Eigen::Lower>() * Lambda_u).trace());
+   double mux = mu * nux / (nu + mu * (BB.selfadjointView<Eigen::Lower>() * m_prior.getLambda()).trace());
    double b = nux / 2;
    double c = 2 * mux / nux;
-   return std::make_pair(b, c);
-}
-
-double ISideInfo::sample_beta_precision(Eigen::MatrixXd &beta, Eigen::MatrixXd &Lambda_u, double nu, double mu)
-{
-   auto gamma_post = posterior_beta_precision(beta, Lambda_u, nu, mu);
-   return rgamma(gamma_post.first, gamma_post.second);
+   return rgamma(b, c);
 }

@@ -11,6 +11,7 @@
 
 namespace smurff {
 
+
 class MacauOnePrior : public NormalOnePrior
 {
 public:
@@ -50,7 +51,7 @@ public:
    const Eigen::VectorXd getMu(int n) const override;
 
 public:
-   void addSideInfo(const SideInfoConfig &);
+   void addSideInfo(const SideInfoConfig &) override;
 
 public:
 

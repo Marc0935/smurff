@@ -24,7 +24,6 @@ FILE (GLOB UTIL_FILES   "../Utils/TruncNorm.h"
                         "../Utils/MatrixUtils.cpp"
                         "../Utils/TensorUtils.cpp"
                         "../Utils/counters.cpp"
-                        "../Utils/linop.cpp"
                         "../Utils/omp_util.cpp"
                         "../Utils/RootFile.cpp"
                         "../Utils/StepFile.cpp"
@@ -168,17 +167,8 @@ FILE (GLOB SOURCE_FILES "../Version.cpp"
 source_group ("Source Files" FILES ${SOURCE_FILES})
 
 FILE (GLOB SIDE_INFO_FILES "../SideInfo/ISideInfo.h"
-                           "../SideInfo/SparseFeat.h"
-                           "../SideInfo/SparseDoubleFeat.h"
-                           "../SideInfo/DenseDoubleFeat.h"
-                           "../SideInfo/LibFastSparseDependency.h"
-                           "../SideInfo/DenseDoubleSideInfo.h"
-                           "../SideInfo/DenseDoubleSideInfo.cpp"
-                           "../SideInfo/SparseDoubleSideInfo.h"
-                           "../SideInfo/SparseDoubleSideInfo.cpp"
-                           "../SideInfo/SparseBinarySideinfo.h"
-                           "../SideInfo/SparseBinarySideinfo.cpp"
-                        )
+                           "../SideInfo/ISideInfo.cpp"
+                         )
 source_group ("Side Info" FILES ${SIDE_INFO_FILES})
 
 #SETUP OUTPUT

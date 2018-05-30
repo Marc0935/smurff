@@ -20,8 +20,8 @@ void MacauOnePrior::init()
    NormalOnePrior::init();
 
    // init SideInfo related
-   Uhat = Eigen::MatrixXd::Constant(num_latent(), Features->rows(), 0.0);
-   beta = Eigen::MatrixXd::Constant(num_latent(), Features->cols(), 0.0);
+   Uhat = Eigen::MatrixXd::Constant(num_latent(), Features->num_item(), 0.0);
+   beta = Eigen::MatrixXd::Constant(num_latent(), Features->num_feat(), 0.0);
 
    // initial value (should be determined automatically)
    // Hyper-prior for beta_precision (mean 1.0):

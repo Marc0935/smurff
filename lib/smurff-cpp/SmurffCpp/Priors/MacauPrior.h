@@ -11,10 +11,6 @@
 
 namespace smurff {
 
-//sample_beta method is now virtual. because we override it in MPIMacauPrior
-//we also have this method in MacauOnePrior but it is not virtual
-//maybe make it virtual?
-
 /// Prior with side information
 class MacauPrior : public NormalPrior
 {
@@ -36,7 +32,7 @@ public:
    const Eigen::VectorXd getMu(int n) const override;
 
 public:
-   void addSideInfo(const SideInfoConfig &);
+   void addSideInfo(const SideInfoConfig &) override;
 
 public:
 

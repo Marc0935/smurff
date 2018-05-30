@@ -36,6 +36,10 @@ protected:
 public:
    ILatentPrior(std::shared_ptr<BaseSession> session, uint32_t mode, std::string name = "xxxx");
    virtual ~ILatentPrior() {}
+
+   //
+   virtual void addSideInfo(const SideInfoConfig &);
+
    virtual void init();
 
    // utility

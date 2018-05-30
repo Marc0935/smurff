@@ -10,6 +10,11 @@ ILatentPrior::ILatentPrior(std::shared_ptr<BaseSession> session, uint32_t mode, 
 
 }
 
+void ILatentPrior::addSideInfo(const SideInfoConfig &)
+{
+   THROWERROR("Prior " + m_name + " does not support side info");
+}
+
 void ILatentPrior::init()
 {
    rrs.init(VectorXd::Zero(num_latent()));

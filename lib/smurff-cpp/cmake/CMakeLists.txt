@@ -327,7 +327,7 @@ if(MSVC)
 add_subdirectory (../Smurff/cmake utils/Smurff)
 else()
 add_subdirectory (../Smurff/cmake utils/Smurff)
-add_subdirectory (../SmurffMPI/cmake utils/SmurffMPI)
+# add_subdirectory (../SmurffMPI/cmake utils/SmurffMPI)
 endif()
 
 
