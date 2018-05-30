@@ -71,7 +71,7 @@ const Eigen::VectorXd MacauPrior::getMu(int n) const
 
 void MacauPrior::addSideInfo(const SideInfoConfig &c)
 {
-   //features.push_back(std::make_shared<ISideInfo>(c, *this));
+   features.push_back(ISideInfo::create_side_info(c,*this));
 }
 
 void MacauPrior::save(std::shared_ptr<const StepFile> sf) const

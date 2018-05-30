@@ -18,11 +18,12 @@ class ISideInfo
    ISideInfo(const SideInfoConfig &, const MacauPrior &);
    virtual ~ISideInfo();
 
+   static std::shared_ptr<ISideInfo> create_side_info(const SideInfoConfig &, const MacauPrior &);
+
            int num_latent() const;
    virtual int num_feat() const = 0;
    virtual int num_item() const = 0;
    virtual uint64_t nnz() const = 0;
-   virtual bool is_dense() const = 0;
 
    // access from prior
    const Eigen::MatrixXd &getUhat() const;
@@ -43,10 +44,8 @@ class ISideInfo
    double beta_precision;
 
 public:
-   void init();
-
+   virtual void init() = 0;
    virtual void sample_beta() = 0;
-   virtual void compute_FtF() = 0;
 
 protected:
    double sample_beta_precision();
@@ -61,8 +60,6 @@ protected:
 
    std::ostream &info(std::ostream &os, std::string indent);
    std::ostream &status(std::ostream &os, std::string indent) const;
-   virtual std::ostream &print(std::ostream &os) const = 0;
-
 };
 
 } // namespace smurff

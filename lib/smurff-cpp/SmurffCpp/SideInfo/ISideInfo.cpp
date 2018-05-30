@@ -3,6 +3,8 @@
 #include <SmurffCpp/IO/MatrixIO.h>
 #include <SmurffCpp/IO/GenericIO.h>
 
+#include <SmurffCpp/Utils/linop.h>
+
 #include <SmurffCpp/Configs/SideInfoConfig.h>
 
 #include <SmurffCpp/Utils/Distribution.h>
@@ -44,17 +46,6 @@ const Eigen::MatrixXd &ISideInfo::getBBt() const
    return BBt;
 }
 
-void ISideInfo::init()
-{
-   if (m_config.getDirect())
-   {
-      compute_FtF(); // sparse or dense
-      FtF_plus_beta.diagonal().array() += beta_precision;
-   }
-
-   Uhat = MatrixXd::Zero(num_latent(), num_item());
-   beta = MatrixXd::Zero(num_latent(), num_feat());
-}
 
 template <typename FeaturesType>
 class SideInfoTempl : public ISideInfo
@@ -72,12 +63,24 @@ class SideInfoTempl : public ISideInfo
  private:
    FeaturesType F, Ft;
 
+   void init() override
+   {
+      if (m_config.getDirect())
+      {
+         FtF_plus_beta = Ft * F;
+         FtF_plus_beta.diagonal().array() += beta_precision;
+      }
+
+      Uhat = MatrixXd::Zero(num_latent(), num_item());
+      beta = MatrixXd::Zero(num_latent(), num_feat());
+   }
+
    void sample_beta() override
    {
       const MatrixXd &U = m_prior.U();
       // Ft_y = (U .- mu + Normal(0, Lambda^-1)) * F + sqrt(lambda_beta) * Normal(0, Lambda^-1)
       // Ft_y is [ D x F ] matrix
-      auto tmp = (U + MvNormal_pre(m_prior.getLambda(), num_item())).colwise() - m_prior.getMu();
+      auto tmp = (U + MvNormal_prec(m_prior.getLambda(), num_item())).colwise() - m_prior.getMuuuu();
       MatrixXd Ft_y = tmp * F + sqrt(beta_precision) * MvNormal_prec(m_prior.getLambda(), num_feat());
 
       if (m_config.getDirect())
@@ -87,7 +90,7 @@ class SideInfoTempl : public ISideInfo
          double tol = m_config.getTol();
          double max_iter = m_config.getMaxIter();
          double throw_on_chol = m_config.getThrowOnCholeskyError();
-         solve_blockcg(beta, beta_precision, Ft_y, tol, max_iter, 32, 8, throw_on_chol);
+         linop::solve_blockcg(beta, Ft, beta_precision, Ft_y, tol, max_iter, 32, 8, throw_on_chol);
       }
 
       //-- compute Uhat
@@ -107,6 +110,13 @@ class SideInfoTempl : public ISideInfo
    }
 };
 
+typedef SideInfoTempl<Eigen::MatrixXd> DenseSideInfo;
+
+std::shared_ptr<ISideInfo> ISideInfo::create_side_info(const SideInfoConfig &c, const MacauPrior &p)
+{
+   return std::shared_ptr<ISideInfo>(new DenseSideInfo(c, p));
+}
+
 void ISideInfo::save(std::shared_ptr<const StepFile> sf) const
 {
    std::string path = sf->getLinkMatrixFileName(m_prior.getMode());
@@ -122,9 +132,7 @@ void ISideInfo::restore(std::shared_ptr<const StepFile> sf)
 
 std::ostream &ISideInfo::info(std::ostream &os, std::string indent)
 {
-   os << indent << "SideInfo: ";
-   print(os);
-   os << indent << " Method: ";
+   os << indent << "Method: ";
    if (m_config.getDirect())
    {
       os << "Cholesky Decomposition";

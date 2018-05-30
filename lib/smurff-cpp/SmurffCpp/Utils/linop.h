@@ -48,7 +48,8 @@ inline void solve_blockcg(Eigen::MatrixXd & X, T & K, double reg, Eigen::MatrixX
 //   B = n x m matrix
 //
 template<typename T>
-inline int solve_blockcg(Eigen::MatrixXd & X, T & K, double reg, Eigen::MatrixXd & B, double tol, int max_iter, bool throw_on_cholesky_error) {
+inline int solve_blockcg(Eigen::MatrixXd & X, T & K, double reg, Eigen::MatrixXd & B,
+                        double tol, int max_iter, bool throw_on_cholesky_error) {
   // initialize
   const int nfeat = B.cols();
   const int nrhs  = B.rows();

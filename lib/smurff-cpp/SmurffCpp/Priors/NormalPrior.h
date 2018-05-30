@@ -50,7 +50,7 @@ public:
      return Lambda;
   }
 
-  const Eigen::VectorXd &getMu() const
+  const Eigen::VectorXd &getMuuuu() const
   {
      return mu;
   }

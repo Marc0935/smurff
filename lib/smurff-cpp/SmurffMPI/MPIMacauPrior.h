@@ -37,7 +37,6 @@ public:
 
    std::ostream &info(std::ostream &os, std::string indent) override;
        
-   void sample_beta() override;
 
    bool run_slave() override;
 
