@@ -201,8 +201,13 @@ TEST_CASE( "linop/solve_blockcg_dense/fail", "BlockCG solver for dense (3rhs sep
         0.34,  0.05, -1.48,  1.11,
         0.09,  0.51, -0.63,  1.59;
  
+   auto op = [&sf](const Eigen::MatrixXd &X) -> Eigen::MatrixXd
+   {
+      return (sf.transpose() * (sf * X.transpose())).transpose() + 0.5 * X;
+   };
+
    // this system is unsolvable
-   REQUIRE_THROWS(smurff::linop::solve_blockcg(X, sf, 0.5, B, 1e-6, 1000, true));
+   REQUIRE_THROWS(smurff::linop::solve_blockcg(X, op, B, 1e-6, 1000, true));
 }
 
 TEST_CASE( "linop/solve_blockcg_dense/ok", "BlockCG solver for dense (3rhs separately)" ) 
@@ -229,8 +234,13 @@ TEST_CASE( "linop/solve_blockcg_dense/ok", "BlockCG solver for dense (3rhs separ
    Eigen::MatrixXd B = ((K.transpose() * K + Eigen::MatrixXd::Identity(6,6) * reg) * X_true.transpose()).transpose();
    Eigen::MatrixXd X(3, 6);
 
+   auto op = [&K](const Eigen::MatrixXd &X) -> Eigen::MatrixXd
+   {
+      return (K.transpose() * (K * X.transpose())).transpose() + 0.5 * X;
+   };
+
    //-- Solves the system (K' * K + reg * I) * X = B for X for m right-hand sides
-   smurff::linop::solve_blockcg(X, K, 0.5, B, 1e-6, 1000, true);
+   smurff::linop::solve_blockcg(X, op, B, 1e-6, 1000, true);
 
    for (int i = 0; i < X.rows(); i++) {
      for (int j = 0; j < X.cols(); j++) {

@@ -7,10 +7,10 @@
 
 namespace smurff { namespace linop {
 
-template<typename T>
-void  solve_blockcg(Eigen::MatrixXd & X, T & t, double reg, Eigen::MatrixXd & B, double tol, int max_iter, const int blocksize, const int excess, bool throw_on_cholesky_error = false);
-template<typename T>
-int  solve_blockcg(Eigen::MatrixXd & X, T & t, double reg, Eigen::MatrixXd & B, double tol, int max_iter, bool throw_on_cholesky_error = false);
+template<typename OperatorType>
+void  solve_blockcg(Eigen::MatrixXd & X, OperatorType & t, Eigen::MatrixXd & B, double tol, int max_iter, const int blocksize, const int excess, bool throw_on_cholesky_error = false);
+template<typename OperatorType>
+int  solve_blockcg(Eigen::MatrixXd & X, OperatorType & t, Eigen::MatrixXd & B, double tol, int max_iter, bool throw_on_cholesky_error = false);
 
 inline void makeSymmetric(Eigen::MatrixXd & A)
 {
@@ -18,10 +18,10 @@ inline void makeSymmetric(Eigen::MatrixXd & A)
 }
 
 /** good values for solve_blockcg are blocksize=32 an excess=8 */
-template<typename T>
-inline void solve_blockcg(Eigen::MatrixXd & X, T & K, double reg, Eigen::MatrixXd & B, double tol, int max_iter, const int blocksize, const int excess, bool throw_on_cholesky_error) {
+template<typename OperatorType>
+inline void solve_blockcg(Eigen::MatrixXd & X, OperatorType & Op, Eigen::MatrixXd & B, double tol, int max_iter, const int blocksize, const int excess, bool throw_on_cholesky_error) {
   if (B.rows() <= excess + blocksize) {
-    solve_blockcg(X, K, reg, B, tol, max_iter, throw_on_cholesky_error);
+    solve_blockcg(X, Op, B, tol, max_iter, throw_on_cholesky_error);
     return;
   }
   // split B into blocks of size <blocksize> (+ excess if needed)
@@ -35,27 +35,28 @@ inline void solve_blockcg(Eigen::MatrixXd & X, T & K, double reg, Eigen::MatrixX
     Xblock.resize(nrows, X.cols());
 
     Bblock = B.block(i, 0, nrows, B.cols());
-    solve_blockcg(Xblock, K, reg, Bblock, tol, max_iter, throw_on_cholesky_error);
+    solve_blockcg(Xblock, Op,  Bblock, tol, max_iter, throw_on_cholesky_error);
     X.block(i, 0, nrows, X.cols()) = Xblock;
   }
 }
 
 //
-//-- Solves the system (K' * K + reg * I) * X = B for X for m right-hand sides
+//-- Solves the system Op(X) = B 
+//      for Op like (K' * K + reg * I)
+//      for X
+//      for m right-hand sides
 //   K = d x n matrix
 //   I = n x n identity
 //   X = n x m matrix
 //   B = n x m matrix
 //
-template<typename T>
-inline int solve_blockcg(Eigen::MatrixXd & X, T & K, double reg, Eigen::MatrixXd & B,
+template<typename OperatorType>
+inline int solve_blockcg(Eigen::MatrixXd & X, OperatorType & Op, Eigen::MatrixXd & B,
                         double tol, int max_iter, bool throw_on_cholesky_error) {
   // initialize
   const int nfeat = B.cols();
   const int nrhs  = B.rows();
   double tolsq = tol*tol;
-
-  if (nfeat != K.cols()) {THROWERROR("B.cols() must equal K.cols()");}
 
   Eigen::VectorXd norms(nrhs), inorms(nrhs); 
   norms.setZero();
@@ -89,14 +90,11 @@ inline int solve_blockcg(Eigen::MatrixXd & X, T & K, double reg, Eigen::MatrixXd
   Eigen::MatrixXd RtR2(nrhs, nrhs);
 
   Eigen::MatrixXd KP(nrhs, nfeat);
-  Eigen::MatrixXd KPtmp(nrhs, K.rows());
   Eigen::MatrixXd PtKP(nrhs, nrhs);
-  //Eigen::Matrix<double, N, N> A;
-  //Eigen::Matrix<double, N, N> Psi;
   Eigen::MatrixXd A;
   Eigen::MatrixXd Psi;
 
-  RtR = R.transpose() * R;
+  RtR = R * R.transpose();
   makeSymmetric(RtR);
 
   const int nblocks = (int)ceil(nfeat / 64.0);
@@ -104,8 +102,8 @@ inline int solve_blockcg(Eigen::MatrixXd & X, T & K, double reg, Eigen::MatrixXd
   // CG iteration:
   int iter = 0;
   for (iter = 0; iter < max_iter; iter++) {
-    // KP = K * P
-    KP.noalias() = (K.transpose() * (K * P.transpose())).transpose() + reg * P;
+    // KP = Op(P)
+    KP.noalias() = Op(P); // ( K.transpose() * (K * P.transpose())).transpose() + reg * P;
     PtKP = P * KP.transpose();
     A = PtKP.llt().solve(RtR).transpose();
     

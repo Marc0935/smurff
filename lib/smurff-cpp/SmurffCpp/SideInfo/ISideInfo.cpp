@@ -90,7 +90,13 @@ class SideInfoTempl : public ISideInfo
          double tol = m_config.getTol();
          double max_iter = m_config.getMaxIter();
          double throw_on_chol = m_config.getThrowOnCholeskyError();
-         linop::solve_blockcg(beta, Ft, beta_precision, Ft_y, tol, max_iter, 32, 8, throw_on_chol);
+         //block cg operator
+         auto FtFOp = [this](MatrixXd &X) -> MatrixXd
+         {
+            return (this->Ft * (this->F * X.transpose())).transpose() + this->beta_precision * X;
+         };
+
+         linop::solve_blockcg(beta, FtFOp , Ft_y, tol, max_iter, 32, 8, throw_on_chol);
       }
 
       //-- compute Uhat
