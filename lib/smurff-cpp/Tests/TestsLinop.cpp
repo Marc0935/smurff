@@ -98,40 +98,27 @@ TEST_CASE( "linop/AtA_mul_Bx(csr)", "AtA_mul_Bx for CSR" ) {
    REQUIRE( (out - outtr).norm() == Approx(0) );
 }
 
-TEST_CASE( "SparseFeat/compute_uhat", "compute_uhat" ) 
-{
-   int rows[9] = { 0, 3, 3, 2, 5, 4, 1, 2, 4 };
-   int cols[9] = { 1, 0, 2, 1, 3, 0, 1, 3, 2 };
-   SparseFeat sf(6, 4, 9, rows, cols);
-   Eigen::MatrixXd beta(3, 4), uhat(3, 6), uhat_true(3, 6);
- 
-   beta << 0.56,  0.55,  0.3 , -1.78,
-           1.63, -0.71,  0.8 , -0.28,
-           0.47,  0.37, -1.36,  0.86;
-   uhat_true <<  0.55,  0.55, -1.23,  0.86,  0.86, -1.78,
-                -0.71, -0.71, -0.99,  2.43,  2.43, -0.28,
-                 0.37,  0.37,  1.23, -0.89, -0.89,  0.86;
- 
-   smurff::linop::compute_uhat(uhat, sf, beta);
-   for (int i = 0; i < uhat.rows(); i++) {
-     for (int j = 0; j < uhat.cols(); j++) {
-       REQUIRE( uhat(i,j) == Approx(uhat_true(i,j)) );
-     }
-   }
-}
 #endif
-#if 0
 
 TEST_CASE( "SparseMatrix/solve_blockcg", "BlockCG solver (1rhs)" ) 
 {
-   int rows[9] = { 0, 3, 3, 2, 5, 4, 1, 2, 4 };
-   int cols[9] = { 1, 0, 2, 1, 3, 0, 1, 3, 2 };
-   SparseMatrix sf(6,4); // sf(6, 4, 9, rows, cols);
+   std::vector<uint32_t> rows = { 0, 3, 3, 2, 5, 4, 1, 2, 4 };
+   std::vector<uint32_t> cols = { 1, 0, 2, 1, 3, 0, 1, 3, 2 };
+   MatrixConfig sf(6, 4, rows, cols);
+   Eigen::SparseMatrix<double> F = matrix_utils::sparse_to_eigen(sf);
+   Eigen::SparseMatrix<double> Ft = F.transpose();
+   
    Eigen::MatrixXd B(1, 4), X(1, 4), X_true(1, 4);
  
    B << 0.56,  0.55,  0.3 , -1.78;
    X_true << 0.35555556,  0.40709677, -0.16444444, -0.87483871;
-   int niter = smurff::linop::solve_blockcg(X, sf, 0.5, B, 1e-6, 1000);
+
+   auto op = [&F, &Ft](const Eigen::MatrixXd &X) -> Eigen::MatrixXd
+   {
+      return (Ft * (F * X.transpose())).transpose() + 0.5 * X;
+   }; 
+   
+   int niter = smurff::linop::solve_blockcg(X, op, B, 1e-6, 1000);
    for (int i = 0; i < X.rows(); i++) {
      for (int j = 0; j < X.cols(); j++) {
        REQUIRE( X(i,j) == Approx(X_true(i,j)) );
@@ -139,7 +126,6 @@ TEST_CASE( "SparseMatrix/solve_blockcg", "BlockCG solver (1rhs)" )
    }
    REQUIRE( niter <= 4);
 }
-#endif
 
 TEST_CASE( "SparseFeat/solve_blockcg_1_0", "BlockCG solver (3rhs separately)" ) 
 {
