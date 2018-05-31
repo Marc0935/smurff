@@ -152,10 +152,13 @@ Config::Config()
    m_classify = false;
 }
 
-const std::vector<std::shared_ptr<SideInfoConfig> >& Config::getSideInfoConfigs(int mode) const
+const std::vector<std::shared_ptr<SideInfoConfig> > Config::getSideInfoConfigs(int mode) const
 {
   auto iter = m_sideInfoConfigs.find(mode);
-  THROWERROR_ASSERT(iter != m_sideInfoConfigs.end());
+  if (iter == m_sideInfoConfigs.end()) {
+     // return empty vector
+     return std::vector<std::shared_ptr<SideInfoConfig> >();
+  }
   return iter->second;
 }
 
