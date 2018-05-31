@@ -39,15 +39,15 @@ namespace smurff
    public:
       MatrixConfig(std::uint64_t nrow, std::uint64_t ncol,
                    const std::vector<std::uint32_t>& rows, const std::vector<std::uint32_t>& cols, const std::vector<double>& values,
-                   const NoiseConfig& noiseConfig, bool isScarce);
+                   const NoiseConfig& noiseConfig = NoiseConfig(), bool isScarce = false);
 
       MatrixConfig(std::uint64_t nrow, std::uint64_t ncol,
                    std::vector<std::uint32_t>&& rows, std::vector<std::uint32_t>&& cols, std::vector<double>&& values,
-                   const NoiseConfig& noiseConfig, bool isScarce);
+                   const NoiseConfig& noiseConfig = NoiseConfig(), bool isScarce = false);
 
       MatrixConfig(std::uint64_t nrow, std::uint64_t ncol,
                    std::shared_ptr<std::vector<std::uint32_t> > rows, std::shared_ptr<std::vector<std::uint32_t> > cols, std::shared_ptr<std::vector<double> > values,
-                   const NoiseConfig& noiseConfig, bool isScarce);
+                   const NoiseConfig& noiseConfig = NoiseConfig(), bool isScarce = false);
 
    //
    // Sparse binary matrix constructors
@@ -55,15 +55,15 @@ namespace smurff
    public:
       MatrixConfig(std::uint64_t nrow, std::uint64_t ncol,
                    const std::vector<std::uint32_t>& rows, const std::vector<std::uint32_t>& cols,
-                   const NoiseConfig& noiseConfig, bool isScarce);
+                   const NoiseConfig& noiseConfig = NoiseConfig(), bool isScarce = false);
 
       MatrixConfig(std::uint64_t nrow, std::uint64_t ncol,
                    std::vector<std::uint32_t>&& rows, std::vector<std::uint32_t>&& cols,
-                   const NoiseConfig& noiseConfig, bool isScarce);
+                   const NoiseConfig& noiseConfig = NoiseConfig(), bool isScarce = false);
 
       MatrixConfig(std::uint64_t nrow, std::uint64_t ncol,
                    std::shared_ptr<std::vector<std::uint32_t> > rows, std::shared_ptr<std::vector<std::uint32_t> > cols,
-                   const NoiseConfig& noiseConfig, bool isScarce);
+                   const NoiseConfig& noiseConfig = NoiseConfig(), bool isScarce = false);
 
    //
    // Constructors for constructing sparse matrix as a tensor
@@ -71,15 +71,15 @@ namespace smurff
    public:
       MatrixConfig(std::uint64_t nrow, std::uint64_t ncol,
                    const std::vector<std::uint32_t>& columns, const std::vector<double>& values,
-                   const NoiseConfig& noiseConfig, bool isScarce);
+                   const NoiseConfig& noiseConfig = NoiseConfig(), bool isScarce = false);
 
       MatrixConfig(std::uint64_t nrow, std::uint64_t ncol,
                    std::vector<std::uint32_t>&& columns, std::vector<double>&& values,
-                   const NoiseConfig& noiseConfig, bool isScarce);
+                   const NoiseConfig& noiseConfig = NoiseConfig(), bool isScarce = false);
 
       MatrixConfig(std::uint64_t nrow, std::uint64_t ncol,
                    std::shared_ptr<std::vector<std::uint32_t> > columns, std::shared_ptr<std::vector<double> > values,
-                   const NoiseConfig& noiseConfig, bool isScarce);
+                   const NoiseConfig& noiseConfig = NoiseConfig(), bool isScarce = false);
 
    //
    // Constructors for constructing sparse binary matrix as a tensor
@@ -87,15 +87,15 @@ namespace smurff
    public:
       MatrixConfig(std::uint64_t nrow, std::uint64_t ncol,
                    const std::vector<std::uint32_t>& columns,
-                   const NoiseConfig& noiseConfig, bool isScarce);
+                   const NoiseConfig& noiseConfig = NoiseConfig(), bool isScarce = false);
 
       MatrixConfig(std::uint64_t nrow, std::uint64_t ncol,
                    std::vector<std::uint32_t>&& columns,
-                   const NoiseConfig& noiseConfig, bool isScarce);
+                   const NoiseConfig& noiseConfig = NoiseConfig(), bool isScarce = false);
 
       MatrixConfig(std::uint64_t nrow, std::uint64_t ncol,
                    std::shared_ptr<std::vector<std::uint32_t> > columns,
-                   const NoiseConfig& noiseConfig, bool isScarce);
+                   const NoiseConfig& noiseConfig = NoiseConfig(), bool isScarce = false);
 
    public:
       MatrixConfig();
