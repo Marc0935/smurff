@@ -96,7 +96,7 @@ class SideInfoTempl : public ISideInfo
             return (this->Ft * (this->F * X.transpose())).transpose() + this->beta_precision * X;
          };
 
-         linop::solve_blockcg(beta, FtFOp , Ft_y, tol, max_iter, 32, 8, throw_on_chol);
+         linop::solve_blockcg(beta, FtFOp, Ft_y, tol, max_iter, 32, 8, throw_on_chol);
       }
 
       //-- compute Uhat
