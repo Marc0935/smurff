@@ -32,9 +32,9 @@ void MacauPrior::init()
 
    for(auto &f : features)
    {
+      f->init();
       THROWERROR_ASSERT_MSG(f->num_item() == num_cols(), 
          "Number of rows in train must be equal to number of rows in features");
-      f->init();
    }
 }
 

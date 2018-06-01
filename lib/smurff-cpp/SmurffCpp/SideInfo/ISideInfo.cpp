@@ -4,6 +4,7 @@
 #include <SmurffCpp/IO/GenericIO.h>
 
 #include <SmurffCpp/Utils/linop.h>
+#include <SmurffCpp/Utils/TensorUtils.h>
 
 #include <SmurffCpp/Configs/SideInfoConfig.h>
 
@@ -31,6 +32,21 @@ int ISideInfo::num_latent() const
    return m_prior.num_latent();
 }
 
+int ISideInfo::num_feat() const
+{
+   return m_config.getSideInfo()->getNCol();
+}
+
+int ISideInfo::num_item() const
+{
+   return m_config.getSideInfo()->getNRow();
+}
+
+uint64_t ISideInfo::nnz() const
+{
+   return m_config.getSideInfo()->getNNZ();
+}
+
 const Eigen::MatrixXd &ISideInfo::getUhat() const
 {
    return Uhat;
@@ -56,15 +72,14 @@ class SideInfoTempl : public ISideInfo
    {
    }
 
-   int num_feat() const override { return F.cols(); }
-   int num_item() const override { return F.rows(); }
-   uint64_t nnz() const override { return F.nonZeros(); }
-
  private:
    FeaturesType F, Ft;
 
    void init() override
    {
+      F = tensor_utils::config_to_eigen<FeaturesType>(*m_config.getSideInfo());
+      Ft = F.transpose();
+
       if (m_config.getDirect())
       {
          FtF_plus_beta = Ft * F;
@@ -73,6 +88,7 @@ class SideInfoTempl : public ISideInfo
 
       Uhat = MatrixXd::Zero(num_latent(), num_item());
       beta = MatrixXd::Zero(num_latent(), num_feat());
+      BBt = MatrixXd::Zero(num_latent(), num_latent());
    }
 
    void sample_beta() override
@@ -98,7 +114,7 @@ class SideInfoTempl : public ISideInfo
 
          linop::solve_blockcg(beta, FtFOp, Ft_y, tol, max_iter, 32, 8, throw_on_chol);
       }
-
+      
       //-- compute Uhat
       // uhat       - [D x N] dense matrix
       // sparseFeat - [N x F] sparse matrix (features)
@@ -107,11 +123,16 @@ class SideInfoTempl : public ISideInfo
       //   uhat = beta * sparseFeat'
       Uhat = beta * Ft;
 
+      BBt = beta * beta.transpose();
+
       if (m_config.getSampleBetaPrecision())
       {
          double old_beta = beta_precision;
          beta_precision = sample_beta_precision();
-         FtF_plus_beta.diagonal().array() += beta_precision - old_beta;
+         if (m_config.getDirect())
+         {
+            FtF_plus_beta.diagonal().array() += beta_precision - old_beta;
+         }
       }
    }
 };
@@ -169,9 +190,8 @@ double ISideInfo::sample_beta_precision()
 {
    const double nu = beta_precision_nu0;
    const double mu =  beta_precision_mu0;
-   Eigen::MatrixXd BB = beta * beta.transpose();
    double nux = nu + beta.rows() * beta.cols();
-   double mux = mu * nux / (nu + mu * (BB.selfadjointView<Eigen::Lower>() * m_prior.getLambda()).trace());
+   double mux = mu * nux / (nu + mu * (getBBt().selfadjointView<Eigen::Lower>() * m_prior.getLambda()).trace());
    double b = nux / 2;
    double c = 2 * mux / nux;
    return rgamma(b, c);

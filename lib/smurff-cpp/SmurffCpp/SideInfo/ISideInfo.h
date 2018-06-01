@@ -20,10 +20,10 @@ class ISideInfo
 
    static std::shared_ptr<ISideInfo> create_side_info(const SideInfoConfig &, const MacauPrior &);
 
-           int num_latent() const;
-   virtual int num_feat() const = 0;
-   virtual int num_item() const = 0;
-   virtual uint64_t nnz() const = 0;
+   int num_latent() const;
+   int num_feat() const;
+   int num_item() const;
+   uint64_t nnz() const;
 
    // access from prior
    const Eigen::MatrixXd &getUhat() const;
