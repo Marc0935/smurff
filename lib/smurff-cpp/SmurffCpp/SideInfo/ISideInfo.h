@@ -10,15 +10,15 @@
 namespace smurff
 {
 
-class MacauPrior;
+class ILatentPrior;
 
 class ISideInfo
 {
  public:
-   ISideInfo(const SideInfoConfig &, const MacauPrior &);
+   ISideInfo(const SideInfoConfig &, const ILatentPrior &);
    virtual ~ISideInfo();
 
-   static std::shared_ptr<ISideInfo> create_side_info(const SideInfoConfig &, const MacauPrior &);
+   static std::shared_ptr<ISideInfo> create_side_info(const SideInfoConfig &, const ILatentPrior &);
 
    int num_latent() const;
    int num_feat() const;
@@ -33,6 +33,7 @@ class ISideInfo
  protected:
    Eigen::MatrixXd Uhat;          // delta to m_prior.U()
    Eigen::MatrixXd FtF_plus_beta; // F'F + I*beta_precision
+   Eigen::MatrixXd F_colsq;       // columnwise sum of squared values
    Eigen::MatrixXd beta;          // link matrix
    Eigen::MatrixXd BBt;           // beta * beta' * precision
 
@@ -40,19 +41,25 @@ class ISideInfo
    const double beta_precision_mu0 = 1.0;
    const double beta_precision_nu0 = 1e-3;
 
+   const double beta_precision_a0 = 0.1;
+   const double beta_precision_b0 = 0.1;
+
    // sampled or fixed
    double beta_precision;
+   Eigen::VectorXd beta_precision_one;
 
 public:
    virtual void init() = 0;
    virtual void sample_beta() = 0;
+   virtual void sample_beta_one() = 0;
 
 protected:
    double sample_beta_precision();
+   void sample_beta_precision_one();
 
 protected:
    SideInfoConfig m_config;
-   const MacauPrior &m_prior;
+   const ILatentPrior &m_prior;
 
  public:
    void save(std::shared_ptr<const StepFile> sf) const;

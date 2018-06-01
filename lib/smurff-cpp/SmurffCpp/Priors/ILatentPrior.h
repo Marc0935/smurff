@@ -87,6 +87,10 @@ private:
    Eigen::VectorXd Usum;
    Eigen::MatrixXd UUsum;
 
+protected:
+   Eigen::VectorXd mu;
+   Eigen::MatrixXd Lambda;
+
 public:
    void setMode(std::uint32_t value)
    {
@@ -98,5 +102,15 @@ public:
    {
       return m_mode;
    }
+
+   const Eigen::MatrixXd &getLambda() const
+   {
+      return Lambda;
+   }
+
+   const Eigen::VectorXd &getMu() const
+   {
+      return mu;
+   }
 };
-}
+} // namespace smurff

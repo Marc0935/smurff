@@ -17,8 +17,6 @@ class NormalPrior : public ILatentPrior
 {
 public:
   // hyperparams
-  Eigen::VectorXd mu; 
-  Eigen::MatrixXd Lambda;
   Eigen::MatrixXd WI;
   Eigen::VectorXd mu0;
 
@@ -45,14 +43,5 @@ public:
   void update_prior() override;
   std::ostream &status(std::ostream &os, std::string indent) const override;
 
-  const Eigen::MatrixXd &getLambda() const
-  {
-     return Lambda;
-  }
-
-  const Eigen::VectorXd &getMuuuu() const
-  {
-     return mu;
-  }
 };
 }

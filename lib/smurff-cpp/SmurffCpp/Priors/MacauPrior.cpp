@@ -43,16 +43,16 @@ void MacauPrior::update_prior()
    // sample hyper params
    {
       Eigen::MatrixXd BBt = Eigen::MatrixXd::Zero(num_latent(), num_latent());
-      Eigen::MatrixXd Ures = U();
+      Eigen::MatrixXd Udelta = U();
       std::uint64_t num_feat = 0;
       
       for(auto f : features) {
          BBt.noalias() += f->getBBt();
-         Ures.noalias() -= f->getUhat();
+         Udelta.noalias() -= f->getUhat();
          num_feat += f->num_feat();
       }
 
-      std::tie(mu, Lambda) = CondNormalWishart(Ures, mu0, b0, WI + BBt, df + num_feat);
+      std::tie(mu, Lambda) = CondNormalWishart(Udelta, mu0, b0, WI + BBt, df + num_feat);
    }
 
    // update beta, uhat and beta_precision

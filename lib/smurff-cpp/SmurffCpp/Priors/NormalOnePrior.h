@@ -16,8 +16,6 @@ class NormalOnePrior : public ILatentPrior
 {
 public:
   // hyperparams
-  Eigen::VectorXd mu; 
-  Eigen::MatrixXd Lambda;
   Eigen::MatrixXd WI;
   Eigen::VectorXd mu0;
 

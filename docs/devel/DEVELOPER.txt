@@ -4,7 +4,7 @@ Session::run() {
    for(i=1; i<iter; i++)
         Session::step() {
           for all matrices U, V:
-             ILatenPrior::sample_latents() { // for  
+             ILatentPrior::sample_latents() { // for  
                 for(all rows r in U) // or all cols of V
                   NormalPrior::sample_latent(r) //depends on type of prior
                      get_pnm() // depends on type of Data 
