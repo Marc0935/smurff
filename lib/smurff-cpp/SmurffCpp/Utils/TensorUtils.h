@@ -26,6 +26,19 @@ Eigen::SparseMatrix<double> sparse_to_eigen<const smurff::TensorConfig>(const sm
 template<>
 Eigen::SparseMatrix<double> sparse_to_eigen<smurff::TensorConfig>(smurff::TensorConfig& tensorConfig);
 
+template<typename EigenType>
+EigenType config_to_eigen(const smurff::TensorConfig& tensorConfig); 
+
+template<>
+inline Eigen::SparseMatrix<double> config_to_eigen(const smurff::TensorConfig& tensorConfig) {
+   return sparse_to_eigen(tensorConfig);
+}
+
+template<>
+inline Eigen::MatrixXd config_to_eigen(const smurff::TensorConfig& tensorConfig) {
+   return dense_to_eigen(tensorConfig);
+}
+
 // Conversion of tensor config to matrix config
 
 smurff::MatrixConfig tensor_to_matrix(const smurff::TensorConfig& tensorConfig);
