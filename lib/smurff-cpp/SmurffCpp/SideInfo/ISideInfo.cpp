@@ -81,6 +81,11 @@ class SideInfoTempl : public ISideInfo
       Ft = F.transpose();
       //F_colsq = F.cwiseSquare().colwise().sum();
 
+      // initial value (should be determined automatically)
+      // Hyper-prior for beta_precision (mean 1.0):
+      beta_precision = m_config.getSideInfo()->getNoiseConfig().getPrecision();
+      beta_precision_one = Eigen::VectorXd::Constant(num_latent(), beta_precision);
+
       if (m_config.getDirect())
       {
          FtF_plus_beta = Ft * F;
@@ -92,9 +97,6 @@ class SideInfoTempl : public ISideInfo
       BBt = MatrixXd::Zero(num_latent(), num_latent());
 
 
-      // initial value (should be determined automatically)
-      // Hyper-prior for beta_precision (mean 1.0):
-      beta_precision_one = Eigen::VectorXd::Constant(num_latent(), beta_precision);
    }
 
    void sample_beta() override
@@ -255,6 +257,8 @@ double ISideInfo::sample_beta_precision()
    const double nu = beta_precision_nu0;
    const double mu =  beta_precision_mu0;
    double nux = nu + beta.rows() * beta.cols();
+   SHOW(getBBt());
+   SHOW(m_prior.getLambda());
    double mux = mu * nux / (nu + mu * (getBBt().selfadjointView<Eigen::Lower>() * m_prior.getLambda()).trace());
    double b = nux / 2;
    double c = 2 * mux / nux;
